@@ -12,27 +12,35 @@ import com.solvd.taxi.placement.Route;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
-public class CreateTaxi {
-    private static final Logger log = LogManager.getLogger(CreateTaxi.class);
-    private final Scanner scanner = new Scanner(System.in);
-    private final Random random = new Random();
-    private final Dispatcher dispatcher = PersonGenerator.createDispatcher();
-    private final Mechanic mechanic = PersonGenerator.createMechanic();
-    private final Driver firstDriver = PersonGenerator.createDriver();
-    private final Driver secondDriver = PersonGenerator.createDriver();
-    private final Driver thirdDriver = PersonGenerator.createDriver();
-    private final Driver fourthDriver = PersonGenerator.createDriver();
-    private final Car firstCar = FacilityGenerator.createCar(firstDriver);
-    private final Car secondCar = FacilityGenerator.createCar(secondDriver);
-    private final Car thirdCar = FacilityGenerator.createCar(thirdDriver);
-    private final Car fourthCar = FacilityGenerator.createCar(fourthDriver);
-    private final Car[] cars = new Car[] {firstCar, secondCar, thirdCar, fourthCar};
-    private final Station station = FacilityGenerator.createStation(dispatcher, mechanic, cars);
+public class TaxiApp {
+    private static final Logger log = LogManager.getLogger(TaxiApp.class);
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final Random random = new Random();
+    private static final Dispatcher dispatcher = PersonGenerator.createDispatcher();
+    private static final Mechanic mechanic = PersonGenerator.createMechanic();
+    private static final Driver firstDriver = PersonGenerator.createDriver();
+    private static final Driver secondDriver = PersonGenerator.createDriver();
+    private static final Driver thirdDriver = PersonGenerator.createDriver();
+    private static final Driver fourthDriver = PersonGenerator.createDriver();
+    private static final Car firstCar = FacilityGenerator.createCar(firstDriver);
+    private final static Car secondCar = FacilityGenerator.createCar(secondDriver);
+    private final static Car thirdCar = FacilityGenerator.createCar(thirdDriver);
+    private final static Car fourthCar = FacilityGenerator.createCar(fourthDriver);
+    private final static List<Car> cars = new ArrayList<>() {
+        {
+            add(firstCar);
+            add(secondCar);
+            add(thirdCar);
+            add(fourthCar);
+        }
 
-    public Client initiateClient() {
+    };
+    private final static Station station = FacilityGenerator.createStation(dispatcher, mechanic, cars);
+    private final static Map<Integer, Client> clients= new HashMap<>();
+
+    public static Client initiateClient() {
         // Dialogue start
         log.info("Welcome to Taxi App\nEnter your first name: ");
 
@@ -78,7 +86,7 @@ public class CreateTaxi {
         return client;
     }
 
-    public void initiateOrder(Client client) {
+    public static void initiateOrder(Client client) {
         RouteCreator routeCreator = new RouteCreator();
         Departure clientDeparture = routeCreator.createDeparture();
         Arrival clientArrival = routeCreator.createArrival();
@@ -90,7 +98,7 @@ public class CreateTaxi {
                         100.0)) * 100.0) / 100.0) : route.getRouteCost());
 
         Order order = new Order(client.getId(), client,
-                station.getCars()[random.nextInt(station.getCars().length)],
+                station.getCars().get(random.nextInt(station.getCars().size())),
                 station.getDispatcher(), route, transaction);
 
         log.info("Thanks for your order! \n" +
@@ -108,6 +116,16 @@ public class CreateTaxi {
                         "% discount: \n" +
                         "\t\tTotal: " + order.getTransaction().getAmount() + "\n" : "") +
                 "============================================================");
+    }
+
+    public static void createOrder() {
+        Client client = initiateClient();
+        clients.put(client.getId(), client);
+        initiateOrder(client);
+    }
+
+    public static void getAllClients() {
+        log.info(clients.toString());
     }
 
 }
