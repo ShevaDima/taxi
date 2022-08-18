@@ -2,6 +2,9 @@ package com.solvd.taxi.infrastructure;
 
 import com.solvd.taxi.documents.Order;
 import com.solvd.taxi.documents.Transaction;
+import com.solvd.taxi.enums.Menu;
+import com.solvd.taxi.enums.Mood;
+import com.solvd.taxi.enums.Weather;
 import com.solvd.taxi.exceptions.StringCharacterException;
 import com.solvd.taxi.facility.Car;
 import com.solvd.taxi.facility.Station;
@@ -39,10 +42,13 @@ public class TaxiApp {
     };
     private final static Station station = FacilityGenerator.createStation(dispatcher, mechanic, cars);
     private final static Map<Integer, Client> clients= new HashMap<>();
+    private final static MainMenu mainMenu = new MainMenu();
+    private static Mood mood;
+    private static Weather weather;
 
     public static Client initiateClient() {
         // Dialogue start
-        log.info("Welcome to Taxi App\nEnter your first name: ");
+        log.info("Enter your first name: ");
 
         String clientName;
         try {
@@ -79,14 +85,46 @@ public class TaxiApp {
         // Client init
         Client client = PersonGenerator.createClient(clientName, clientSurname);
 
-        // Dialogue
-        log.info(client.introduce());
-        log.info(station.getDispatcher().introduce());
-
         return client;
     }
 
     public static void initiateOrder(Client client) {
+        // Dialogue
+        log.info(client.introduce());
+        log.info("How are you today?");
+        log.info("1. Happy");
+        log.info("2. Sad");
+        log.info("3. Surprised");
+
+
+        int ans;
+        while (true) {
+            try {
+                ans = Integer.parseInt(scanner.nextLine());
+                break;
+            }
+            catch (NumberFormatException e) {
+                log.error(e.getMessage());
+                log.info("Try one more time. Use only dedicated digits");
+            }
+        }
+
+        switch (ans) {
+            case 1:
+                mood = Mood.HAPPY;
+                break;
+            case 2:
+                mood = Mood.SAD;
+                break;
+            default:
+                mood = Mood.SURPRISED;
+                break;
+        }
+
+        log.info("Thanks! We will take it!");
+
+        log.info(station.getDispatcher().introduce());
+
         RouteCreator routeCreator = new RouteCreator();
         Departure clientDeparture = routeCreator.createDeparture();
         Arrival clientArrival = routeCreator.createArrival();
@@ -101,7 +139,19 @@ public class TaxiApp {
                 station.getCars().get(random.nextInt(station.getCars().size())),
                 station.getDispatcher(), route, transaction);
 
-        log.info("Thanks for your order! \n" +
+        switch (weather) {
+            case SUNNY:
+                log.info("Today is sunny! Have a nice ride");
+                break;
+            case RAINY:
+                log.info("Today is rainy! Be patient please");
+                break;
+            case CLOUDY:
+                log.info("Today is cloudy! Hope you will enjoy a ride");
+                break;
+        }
+
+        log.info("Thanks for your order! " + mood.getMood() + " client\n" +
                 "============================================================\n" +
                 "Order details: \n" +
                 "\tOrder number: " + order.getId() + "\n" +
@@ -126,6 +176,24 @@ public class TaxiApp {
 
     public static void getAllClients() {
         log.info(clients.toString());
+    }
+
+    public static void startApp() {
+        weather = Weather.values()[new Random().nextInt(Weather.values().length)];
+        Client firstClient = new Client("Ivan", "Ivanov", 998, true);
+        Client secondClient = new Client("Petya", "Pyatochkin", 999, false);
+        clients.put(firstClient.getId(), firstClient);
+        clients.put(secondClient.getId(), secondClient);
+        mainMenu.welcomeMenu();
+        switch (mainMenu.getMenu()) {
+            case NEWCLIENT:
+                mainMenu.newClientMenu();
+                break;
+            case OLDCLIENT:
+                mainMenu.oldClientMenu();
+                break;
+        }
+
     }
 
 }
