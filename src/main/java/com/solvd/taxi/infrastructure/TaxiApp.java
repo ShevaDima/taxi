@@ -131,9 +131,12 @@ public class TaxiApp {
 
         Route route = routeCreator.createRoute(clientDeparture, clientArrival);
 
+        CalculateDiscount calculateDiscount = (cost, discount) ->
+                Math.round((cost - (cost * discount / 100.0)) * 100.0) / 100.0;
+
         Transaction transaction = new Transaction(client.getId(), client.getHasDiscount() ?
-                (Math.round((route.getRouteCost() - (route.getRouteCost() * client.getDiscountCard().getDiscount() /
-                        100.0)) * 100.0) / 100.0) : route.getRouteCost());
+                calculateDiscount.discountSum(route.getRouteCost(), client.getDiscountCard().getDiscount()) :
+                route.getRouteCost());
 
         Order order = new Order(client.getId(), client,
                 station.getCars().get(random.nextInt(station.getCars().size())),
