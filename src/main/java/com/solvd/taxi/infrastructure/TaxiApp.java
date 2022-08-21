@@ -41,7 +41,7 @@ public class TaxiApp {
 
     };
     private final static Station station = FacilityGenerator.createStation(dispatcher, mechanic, cars);
-    private final static Map<Integer, Client> clients= new HashMap<>();
+    private final static List<Client> clients= new ArrayList<>();
     private final static MainMenu mainMenu = new MainMenu();
     private static Mood mood;
     private static Weather weather;
@@ -95,7 +95,6 @@ public class TaxiApp {
         log.info("1. Happy");
         log.info("2. Sad");
         log.info("3. Surprised");
-
 
         int ans;
         while (true) {
@@ -173,20 +172,20 @@ public class TaxiApp {
 
     public static void createOrder() {
         Client client = initiateClient();
-        clients.put(client.getId(), client);
+        clients.add(client);
         initiateOrder(client);
     }
 
     public static void getAllClients() {
-        log.info(clients.toString());
+        clients.forEach(client -> System.out.println(client));
     }
 
     public static void startApp() {
         weather = Weather.values()[new Random().nextInt(Weather.values().length)];
         Client firstClient = new Client("Ivan", "Ivanov", 998, true);
         Client secondClient = new Client("Petya", "Pyatochkin", 999, false);
-        clients.put(firstClient.getId(), firstClient);
-        clients.put(secondClient.getId(), secondClient);
+        clients.add(firstClient);
+        clients.add(secondClient);
         mainMenu.welcomeMenu();
         switch (mainMenu.getMenu()) {
             case NEWCLIENT:
