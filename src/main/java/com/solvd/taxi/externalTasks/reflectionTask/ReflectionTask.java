@@ -1,11 +1,11 @@
-package com.solvd.taxi.ReflectionTask;
+package com.solvd.taxi.externalTasks.reflectionTask;
 
 import com.solvd.taxi.Main;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ReflectionTask {
-    private static final Logger log = LogManager.getLogger(Main.class);
+    private static final Logger log = LogManager.getLogger(ReflectionTask.class);
     private int number;
     private String name = "Taxi";
 

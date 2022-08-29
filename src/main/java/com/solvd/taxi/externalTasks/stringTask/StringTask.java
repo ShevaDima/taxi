@@ -1,6 +1,5 @@
-package com.solvd.taxi.StringTask;
+package com.solvd.taxi.externalTasks.stringTask;
 
-import com.solvd.taxi.infrastructure.TaxiApp;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class StringTask {
-    private static final Logger log = LogManager.getLogger(TaxiApp.class);
+    private static final Logger log = LogManager.getLogger(StringTask.class);
     private static final File file = new File("src/main/java/com/solvd/taxi/StringTask/text.txt");
     private static String content = null;
 
